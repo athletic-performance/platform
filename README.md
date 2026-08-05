@@ -72,11 +72,25 @@ infra/                infra-артефакты (пока зарезервиро�
 2. Дальше только Pull Requests.
 3. `main` защищается: no direct push, no force push, required checks, squash merge.
 
+## Staging (web) — Vercel Preview
+
+Staging frontend = **Vercel Preview Environment** (отдельная ветка `staging` не используется).
+
+Подключение проекта (вручную в Vercel UI):
+
+1. Import GitHub repository `athletic-performance/platform`.
+2. Root Directory: `apps/web`.
+3. Framework Preset: Next.js (подхватывается из `apps/web/vercel.json`).
+4. Preview Deployments: включены (по умолчанию для PR / не-production веток).
+5. Environment Variables → **Preview**:
+   - `NEXT_PUBLIC_API_BASE_URL` — создать переменную **без реального staging API URL**.
+   - Реальный URL API не подставлять до деплоя backend.
+
+Сборка на Vercel идёт из монорепозитория: install/build команды заданы в `apps/web/vercel.json`.
+
 ## Staging URLs
 
-После foundation-задач на staging:
-
-- Web: Vercel staging URL (заполняется после FND-004)
+- Web: Preview URL деплоя в Vercel (после подключения репозитория)
 - API: Fly.io staging URL (заполняется после FND-005)
 
 ## Типичные ошибки

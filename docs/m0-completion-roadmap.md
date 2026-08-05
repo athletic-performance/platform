@@ -146,14 +146,17 @@ Vercel
 
 Настроить
 
-- [ ] Preview Deployments
-- [ ] apps/web
-- [ ] staging env
-- [ ] API URL
+- [ ] Preview Deployments (Vercel UI: import `athletic-performance/platform`)
+- [x] apps/web (конфиг: `apps/web/vercel.json`, `apps/web/.nvmrc`; Root Directory в UI: `apps/web`)
+- [ ] staging env = Vercel Preview Environment (отдельная ветка не создаётся)
+- [ ] API URL: в Preview создать `NEXT_PUBLIC_API_BASE_URL` без реального staging API URL
 
 ## Результат
 
 Рабочий staging frontend.
+
+Репозиторий подготовлен: `apps/web/vercel.json`, `apps/web/.nvmrc`, инструкции в README.
+Подключение GitHub → Vercel и env в Preview — вручную в UI.
 
 ---
 
