@@ -95,15 +95,17 @@
 
 ## Нужно
 
-- [ ] multi-stage
-- [ ] production image
-- [ ] non-root user
-- [ ] graceful shutdown
-- [ ] health endpoint внутри контейнера
+- [x] multi-stage
+- [x] production image
+- [x] non-root user
+- [x] graceful shutdown
+- [x] health endpoint внутри контейнера
 
 ## Результат
 
 API полностью контейнеризирован.
+
+Реализация: `apps/api/Dockerfile`, корневой `.dockerignore`.
 
 ---
 

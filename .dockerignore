@@ -1,0 +1,39 @@
+# VCS / IDE
+.git
+.github
+.gitlab
+.cursor
+.idea
+.vscode
+
+# Dependencies & caches
+node_modules
+.pnpm-store
+.turbo
+**/.turbo
+coverage
+**/.nyc_output
+
+# Build outputs (собираются внутри image)
+**/dist
+**/.next
+**/out
+**/*.tsbuildinfo
+
+# Env & secrets — never bake into the image
+.env
+.env.*
+
+# Sources of apps/packages not needed for api image
+apps/web/src
+apps/web/public
+packages/api-client/src
+
+# Docs & local tooling
+docs
+*.md
+docker-compose.yml
+.editorconfig
+.prettierignore
+.prettierrc
+.gitignore
