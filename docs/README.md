@@ -10,7 +10,6 @@
 | [implementation-methodology.md](./implementation-methodology.md) | Методология логических MR        |
 | [architecture/overview.md](./architecture/overview.md)           | Базовая архитектура              |
 | [adr/](./adr/README.md)                                          | Architecture Decision Records    |
-| [gitlab-setup.md](./gitlab-setup.md)                             | Labels, milestone, защита main   |
 
 ## Как пользоваться
 

@@ -15,7 +15,7 @@
 ## Быстрый старт
 
 ```bash
-git clone git@gitlab.com:athletic-performance/platform.git
+git clone git@github.com:athletic-performance/platform.git
 cd platform
 cp .env.example .env
 corepack enable
@@ -69,10 +69,8 @@ infra/                infra-артефакты (пока зарезервиро�
 ## Branch flow
 
 1. Первый bootstrap commit может быть запушен в `main` один раз.
-2. Дальше только Merge Requests.
-3. `main` защищается: no direct push, no force push, required pipeline, squash merge.
-
-Подробности: [docs/gitlab-setup.md](docs/gitlab-setup.md).
+2. Дальше только Pull Requests.
+3. `main` защищается: no direct push, no force push, required checks, squash merge.
 
 ## Staging URLs
 
@@ -93,7 +91,7 @@ infra/                infra-артефакты (пока зарезервиро�
 ## Документация
 
 - [M0 Engineering Foundation](docs/m0-engineering-foundation.md)
+- [M0 completion roadmap](docs/m0-completion-roadmap.md)
 - [Architecture overview](docs/architecture/overview.md)
 - [ADR](docs/adr/README.md)
-- [GitLab setup](docs/gitlab-setup.md)
 - [Implementation methodology](docs/implementation-methodology.md)

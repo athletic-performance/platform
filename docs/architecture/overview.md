@@ -19,8 +19,8 @@ PostgreSQL
 | Database    | PostgreSQL                | Единый source of truth                            |
 | Web hosting | Vercel                    | Staging/preview для `apps/web`                    |
 | API hosting | Fly.io                    | Staging для `apps/api`                            |
-| CI/CD       | GitLab CI/CD              | Validation pipeline, дальнейший container/deploy  |
-| Images      | GitLab Container Registry | Хранение API images                               |
+| CI/CD       | GitHub Actions            | Validation pipeline, дальнейший container/deploy  |
+| Images      | GitHub Container Registry | Хранение API images (`ghcr.io`)                   |
 
 ## Локальный контур
 
@@ -55,9 +55,9 @@ infra/            — место для будущих infra-артефакто�
 
 ```text
 Merge to main
-  → GitLab CI validation
+  → GitHub Actions validation
   → API image build
-  → GitLab Container Registry
+  → GitHub Container Registry (GHCR)
   → Fly.io staging
   → Vercel staging
   → smoke test
