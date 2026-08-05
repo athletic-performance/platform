@@ -10,7 +10,7 @@
 - Node.js 22+
 - pnpm 10.14.0 (через Corepack)
 - Docker + Docker Compose
-- Git
+- Git.
 
 ## Быстрый старт
 
