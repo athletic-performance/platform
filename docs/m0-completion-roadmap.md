@@ -1,8 +1,8 @@
 # Roadmap — завершение M0 и переход к M1
 
-> Текущее состояние: локальная инженерная часть M0 завершена.
+> Текущее состояние: FND-001 — FND-005 завершены.
 >
-> Осталось закрыть инфраструктурную часть Engineering Foundation.
+> Следующий этап: FND-006 — Staging PostgreSQL.
 >
 > Источник истины по содержанию этапа: `docs/m0-engineering-foundation.md`.
 > Этот файл — план доделки оставшихся инфраструктурных пунктов M0 после миграции с GitLab на GitHub.
@@ -168,14 +168,32 @@ Vercel
 
 Настроить
 
-- [ ] Docker image
-- [ ] Secrets
-- [ ] Health Checks
-- [ ] Rollback
+- [x] Docker image
+- [x] Secrets
+- [x] Health Checks
+- [x] Rollback
 
 ## Результат
 
 Рабочий staging API.
+
+## Фактический результат
+
+- staging API: `https://athletic-performance-api-staging.fly.dev`;
+- primary region: `ams`;
+- запущена одна Machine (`shared-cpu-1x`, `256mb`);
+- Fly health checks проходят;
+- `/health/live` возвращает HTTP 200;
+- `/health/ready` возвращает HTTP 200, database up;
+- `/version` возвращает актуальный commit SHA;
+- путь rollback подтверждён.
+
+## Оставшийся operational follow-up
+
+- `CORS_ORIGINS` временно установлен в `https://placeholder.invalid`;
+- значение нужно заменить на фактический Vercel staging origin;
+- изменения в репозитории и новый commit для этого не требуются;
+- корректное значение нужно проверить до закрытия FND-013.
 
 ---
 
