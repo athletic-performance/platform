@@ -188,12 +188,13 @@ Vercel
 - `/version` возвращает актуальный commit SHA;
 - путь rollback подтверждён.
 
-## Оставшийся operational follow-up
+## Настройка CORS_ORIGINS
 
-- `CORS_ORIGINS` временно установлен в `https://placeholder.invalid`;
-- значение нужно заменить на фактический Vercel staging origin;
-- изменения в репозитории и новый commit для этого не требуются;
-- корректное значение нужно проверить до закрытия FND-013.
+- `CORS_ORIGINS` настроен на реальный Vercel staging frontend origin: `https://platform-web-five-psi.vercel.app`;
+- после обновления секрета Fly Machine успешно обновилась;
+- `/health/live` возвращает `{"status":"ok"}`;
+- `/health/ready` возвращает `{"status":"ok","checks":{"database":"up"}}` и подтверждает, что database up;
+- `/version` доступен и возвращает ожидаемый commit SHA `65215241e2e4579b6107d90fc151dc2266d481e0`.
 
 ---
 
