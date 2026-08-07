@@ -1,8 +1,8 @@
 # Roadmap — завершение M0 и переход к M1
 
-> Текущее состояние: FND-001 — FND-006 завершены.
+> Текущее состояние: FND-001 — FND-007 завершены.
 >
-> Следующий этап: FND-007 — Secrets.
+> Следующий этап: FND-008 — Smoke Test.
 >
 > Источник истины по содержанию этапа: `docs/m0-engineering-foundation.md`.
 > Этот файл — план доделки оставшихся инфраструктурных пунктов M0 после миграции с GitLab на GitHub.
@@ -269,19 +269,73 @@ curl https://athletic-performance-api-staging.fly.dev/health/ready
 
 # FND-007 — Secrets
 
+Статус: завершён.
+
 ## Нужно
 
 Разделить
 
-- [ ] local
-- [ ] staging
-- [ ] production
+- [x] local
+- [x] staging
+- [x] production
 
 Настроить
 
-- [ ] GitHub Actions secrets / variables
-- [ ] Fly Secrets
-- [ ] Vercel Environment Variables
+- [x] GitHub Actions secrets / variables
+- [x] Fly Secrets
+- [x] Vercel Environment Variables
+
+## Фактическая реализация
+
+### GitHub Actions
+
+- GitHub Actions secrets и variables проверены;
+- текущие workflow не требуют пользовательских Repository Secrets или Repository Variables;
+- `.github/workflows/publish-api-image.yml` использует встроенный `secrets.GITHUB_TOKEN`, который
+  автоматически предоставляется GitHub Actions и не требует ручного создания;
+- staging-specific GitHub Actions secrets и variables сейчас не требуются.
+
+### Fly.io staging
+
+- staging-приложение: `athletic-performance-api-staging`;
+- чувствительные backend-значения хранятся через Fly Secrets;
+- присутствуют secrets `DATABASE_URL` и `CORS_ORIGINS`;
+- значения secrets не хранятся в репозитории.
+
+### Vercel
+
+- для frontend настроена Environment Variable
+  `NEXT_PUBLIC_API_BASE_URL=https://athletic-performance-api-staging.fly.dev`;
+- переменная назначена на Production и Preview текущего Vercel-проекта;
+- после добавления переменной выполнен redeploy.
+
+### Local
+
+- локальный пример остаётся в `.env.example`:
+  `NEXT_PUBLIC_API_BASE_URL=http://localhost:3001`;
+- staging URL не захардкожен во frontend-коде.
+
+### Production
+
+- отдельная production infrastructure в рамках FND-007 не создавалась;
+- production credentials, database и backend не создавались;
+- staging и local значения не смешиваются с отдельными production credentials.
+
+## Verification
+
+После настройки Vercel через развёрнутый frontend подтверждена рабочая цепочка:
+
+- Web: `healthy`;
+- API: `healthy`;
+- Database: `connected`;
+- Version endpoint работает;
+- Commit SHA отображается.
+
+Эта ручная проверка фиксируется только как verification FND-007 и не закрывает FND-008.
+
+## Итог этапа
+
+FND-007 завершён. Следующий этап: FND-008 — Smoke Test.
 
 ---
 
