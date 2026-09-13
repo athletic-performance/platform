@@ -35,6 +35,14 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Set up Flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Log in to Fly Registry
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: flyctl auth docker
+
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -58,6 +66,7 @@ jobs:
           tags: |
             ${{ steps.image.outputs.name }}:${{ github.sha }}
             ${{ steps.image.outputs.name }}:latest
+            registry.fly.io/athletic-performance-api-staging:${{ github.sha }}
 
   deploy-staging-api:
     name: Deploy staging API
@@ -74,10 +83,9 @@ jobs:
       - name: Deploy immutable API image to Fly.io
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-          REPOSITORY: ${{ github.repository }}
           COMMIT_SHA: ${{ github.sha }}
         run: |
-          IMAGE="ghcr.io/$(echo "$REPOSITORY" | tr '[:upper:]' '[:lower:]')/api:${COMMIT_SHA}"
+          IMAGE="registry.fly.io/athletic-performance-api-staging:${COMMIT_SHA}"
           flyctl deploy \
             --config fly.toml \
             --app athletic-performance-api-staging \
