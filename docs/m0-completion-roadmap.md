@@ -1,8 +1,8 @@
 # Roadmap — завершение M0 и переход к M1
 
-> Текущее состояние: FND-001 — FND-007 завершены.
+> Текущее состояние: FND-001 — FND-007 завершены; FND-008 реализован и ожидает runtime verification.
 >
-> Следующий этап: FND-008 — Smoke Test.
+> Следующий этап: завершение FND-008 после runtime verification нового commit в `main`.
 >
 > Источник истины по содержанию этапа: `docs/m0-engineering-foundation.md`.
 > Этот файл — план доделки оставшихся инфраструктурных пунктов M0 после миграции с GitLab на GitHub.
@@ -115,8 +115,8 @@ API полностью контейнеризирован.
 
 После merge в main
 
-- [ ] build Docker image
-- [ ] push image в GHCR (`ghcr.io`)
+- [x] build Docker image
+- [x] push image в GHCR (`ghcr.io`)
 
 Получать
 
@@ -129,6 +129,11 @@ api:<commit-sha>
 ## Результат
 
 Backend готов к деплою.
+
+## Фактический результат
+
+- API image публикуется в GHCR после успешной validation;
+- создаются теги `api:<commit-sha>` и `api:latest`.
 
 ---
 
@@ -146,17 +151,26 @@ Vercel
 
 Настроить
 
-- [ ] Preview Deployments (Vercel UI: import `athletic-performance/platform`)
+- [x] Preview Deployments (Vercel UI: import `athletic-performance/platform`)
 - [x] apps/web (конфиг: `apps/web/vercel.json`, `apps/web/.nvmrc`; Root Directory в UI: `apps/web`)
-- [ ] staging env = Vercel Preview Environment (отдельная ветка не создаётся)
-- [ ] API URL: в Preview создать `NEXT_PUBLIC_API_BASE_URL` без реального staging API URL
+- [x] staging frontend environment настроен в Vercel project
+- [x] API URL: `NEXT_PUBLIC_API_BASE_URL` настроен для Production и Preview environments
 
 ## Результат
 
 Рабочий staging frontend.
 
 Репозиторий подготовлен: `apps/web/vercel.json`, `apps/web/.nvmrc`, инструкции в README.
-Подключение GitHub → Vercel и env в Preview — вручную в UI.
+Подключение GitHub → Vercel и environment variables выполнено вручную в UI.
+
+## Фактический environment mapping
+
+- feature/docs/chore branches → Vercel Preview Deployments;
+- `main` → Vercel Production Deployment;
+- Vercel project фактически используется как staging frontend проекта;
+- staging URL: `https://platform-web-five-psi.vercel.app`.
+
+Примечание: source of truth местами называет staging frontend Preview. Фактическая конфигурация использует Production environment для `main`, а Preview — для feature/docs/chore branches.
 
 ---
 
@@ -187,6 +201,9 @@ Vercel
 - `/health/ready` возвращает HTTP 200, database up;
 - `/version` возвращает актуальный commit SHA;
 - путь rollback подтверждён.
+- автоматический deployment staging API выполняется через GitHub Actions;
+- после deployment выполняется `pnpm --filter api prisma:migrate`;
+- job `migrate-staging` завершает backend staging flow.
 
 ## Настройка CORS_ORIGINS
 
@@ -290,10 +307,9 @@ curl https://athletic-performance-api-staging.fly.dev/health/ready
 ### GitHub Actions
 
 - GitHub Actions secrets и variables проверены;
-- текущие workflow не требуют пользовательских Repository Secrets или Repository Variables;
-- `.github/workflows/publish-api-image.yml` использует встроенный `secrets.GITHUB_TOKEN`, который
-  автоматически предоставляется GitHub Actions и не требует ручного создания;
-- staging-specific GitHub Actions secrets и variables сейчас не требуются.
+- для deployment и migrations используются secrets `FLY_API_TOKEN` и `DATABASE_URL`;
+- `.github/workflows/publish-api-image.yml` использует встроенный `secrets.GITHUB_TOKEN` для GHCR;
+- значения secrets не хранятся в репозитории.
 
 ### Fly.io staging
 
@@ -335,11 +351,24 @@ curl https://athletic-performance-api-staging.fly.dev/health/ready
 
 ## Итог этапа
 
-FND-007 завершён. Следующий этап: FND-008 — Smoke Test.
+FND-007 завершён. FND-008 реализован и ожидает runtime verification нового commit после merge в `main`.
 
 ---
 
 # FND-008 — Smoke Test
+
+Статус: реализован; окончательное закрытие ожидает runtime verification после merge нового commit в `main`.
+
+## Фактическая реализация
+
+- workflow job: `smoke-test`;
+- цепочка: `validate` → `publish-api` → `deploy-staging-api` → `migrate-staging` → `smoke-test`;
+- smoke test ожидает commit-scoped Vercel status `context=Vercel`, `state=success`;
+- проверяется frontend URL `https://platform-web-five-psi.vercel.app`;
+- проверяются `/health/live`, `/health/ready` и `/version` staging API;
+- `commitSha` сравнивается с `github.sha`;
+- frontend → API подтверждается через существующую server-side staging страницу;
+- runtime verification нового commit после merge в `main` ещё не выполнялась.
 
 ## Проверить
 
