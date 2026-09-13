@@ -19,8 +19,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  validate:
+    name: Validate
+    uses: ./.github/workflows/ci.yml
+
   publish-api:
     name: Build and push API image
+    needs: validate
     runs-on: ubuntu-latest
 
     steps:
@@ -53,3 +58,117 @@ jobs:
           tags: |
             ${{ steps.image.outputs.name }}:${{ github.sha }}
             ${{ steps.image.outputs.name }}:latest
+
+  deploy-staging-api:
+    name: Deploy staging API
+    needs: publish-api
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy immutable API image to Fly.io
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          IMAGE="ghcr.io/$(echo "$REPOSITORY" | tr '[:upper:]' '[:lower:]')/api:${COMMIT_SHA}"
+          flyctl deploy \
+            --config fly.toml \
+            --app athletic-performance-api-staging \
+            --image "$IMAGE" \
+            --env COMMIT_SHA="${COMMIT_SHA}" \
+            --yes
+
+  migrate-staging:
+    name: Apply staging migrations
+    needs: deploy-staging-api
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.14.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      # postinstall и Prisma CLI используют корневой .env; DATABASE_URL передаётся из secret.
+      - name: Prepare migration environment
+        run: cp .env.example .env
+
+      - name: Install API dependencies
+        run: pnpm install --frozen-lockfile --filter api...
+
+      - name: Apply staging migrations
+        run: pnpm --filter api prisma:migrate
+
+  smoke-test:
+    name: Run staging smoke test
+    needs: migrate-staging
+    runs-on: ubuntu-latest
+    env:
+      API_URL: https://athletic-performance-api-staging.fly.dev
+      FRONTEND_URL: https://platform-web-five-psi.vercel.app
+      EXPECTED_COMMIT_SHA: ${{ github.sha }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Wait for Vercel deployment
+        run: |
+          for attempt in $(seq 1 30); do
+            vercel_state="$(gh api \
+              "repos/${GITHUB_REPOSITORY}/commits/${EXPECTED_COMMIT_SHA}/status" \
+              --jq '.statuses[]? | select(.context == "Vercel") | .state' \
+              | tail -n 1)"
+
+            if [ "$vercel_state" = "success" ]; then
+              exit 0
+            fi
+
+            if [ "$vercel_state" = "failure" ] || [ "$vercel_state" = "error" ]; then
+              echo "Vercel deployment завершился неуспешно."
+              exit 1
+            fi
+
+            if [ "$attempt" -eq 30 ]; then
+              echo "Не дождались успешного Vercel deployment для текущего commit."
+              exit 1
+            fi
+
+            sleep 10
+          done
+
+      - name: Check staging frontend
+        run: |
+          frontend_body="$(curl --fail --silent --show-error --location "$FRONTEND_URL")"
+          echo "$frontend_body" | grep -Fq 'healthy'
+          echo "$frontend_body" | grep -Fq 'connected'
+          echo "$frontend_body" | grep -Fq "$EXPECTED_COMMIT_SHA"
+
+      - name: Check API liveness
+        run: curl --fail --silent --show-error --location "$API_URL/health/live"
+
+      - name: Check API readiness
+        run: |
+          ready_body="$(curl --fail --silent --show-error --location "$API_URL/health/ready")"
+          echo "$ready_body" | jq -e '.status == "ok" and .checks.database == "up"'
+
+      - name: Check API version
+        run: |
+          version_body="$(curl --fail --silent --show-error --location "$API_URL/version")"
+          echo "$version_body" | jq -e --arg expected "$EXPECTED_COMMIT_SHA" '.commitSha == $expected'
