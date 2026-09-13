@@ -1,8 +1,8 @@
 # Roadmap — завершение M0 и переход к M1
 
-> Текущее состояние: FND-001 — FND-007 завершены; FND-008 реализован и ожидает runtime verification.
+> Текущее состояние: FND-001 — FND-008 завершены.
 >
-> Следующий этап: завершение FND-008 после runtime verification нового commit в `main`.
+> Следующий этап: FND-009 — Structured Logging.
 >
 > Источник истины по содержанию этапа: `docs/m0-engineering-foundation.md`.
 > Этот файл — план доделки оставшихся инфраструктурных пунктов M0 после миграции с GitLab на GitHub.
@@ -351,13 +351,13 @@ curl https://athletic-performance-api-staging.fly.dev/health/ready
 
 ## Итог этапа
 
-FND-007 завершён. FND-008 реализован и ожидает runtime verification нового commit после merge в `main`.
+FND-007 завершён. Следующий этап: FND-009 — Structured Logging.
 
 ---
 
 # FND-008 — Smoke Test
 
-Статус: реализован; окончательное закрытие ожидает runtime verification после merge нового commit в `main`.
+Статус: завершён.
 
 ## Фактическая реализация
 
@@ -368,17 +368,18 @@ FND-007 завершён. FND-008 реализован и ожидает runtime
 - проверяются `/health/live`, `/health/ready` и `/version` staging API;
 - `commitSha` сравнивается с `github.sha`;
 - frontend → API подтверждается через существующую server-side staging страницу;
-- runtime verification нового commit после merge в `main` ещё не выполнялась.
+- runtime verification успешно выполнена после merge commit в `main`;
+- post-merge GitHub Actions run завершился со статусом `Success`, все jobs зелёные.
 
 ## Проверить
 
-- [ ] Frontend доступен
-- [ ] Backend доступен
-- [ ] Database подключена
-- [ ] /health/live
-- [ ] /health/ready
-- [ ] /version
-- [ ] Frontend успешно получает API
+- [x] Frontend доступен
+- [x] Backend доступен
+- [x] Database подключена
+- [x] /health/live
+- [x] /health/ready
+- [x] /version
+- [x] Frontend успешно получает API
 
 ---
 
