@@ -2,26 +2,7 @@
 version: 2
 updates:
   - package-ecosystem: npm
-    directories:
-      - /
-      - /apps/web
-      - /apps/api
-      - /packages/api-client
-      - /packages/config
+    directory: /
     schedule:
       interval: monthly
     open-pull-requests-limit: 10
-    groups:
-      monorepo-minor-patch:
-        patterns:
-          - "*"
-        update-types:
-          - minor
-          - patch
-        group-by: dependency-name
-      monorepo-major:
-        patterns:
-          - "*"
-        update-types:
-          - major
-        group-by: dependency-name
