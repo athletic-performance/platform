@@ -1,8 +1,8 @@
 # Roadmap — завершение M0 и переход к M1
 
-> Текущее состояние: FND-001 — FND-008 завершены.
+> Текущее состояние: FND-001 — FND-009 завершены.
 >
-> Следующий этап: FND-009 — Structured Logging.
+> Следующий этап: FND-010 — Dependency Automation.
 >
 > Источник истины по содержанию этапа: `docs/m0-engineering-foundation.md`.
 > Этот файл — план доделки оставшихся инфраструктурных пунктов M0 после миграции с GitLab на GitHub.
@@ -351,7 +351,7 @@ curl https://athletic-performance-api-staging.fly.dev/health/ready
 
 ## Итог этапа
 
-FND-007 завершён. Следующий этап: FND-009 — Structured Logging.
+FND-007 завершён. Следующий этап: FND-010 — Dependency Automation.
 
 ---
 
@@ -385,12 +385,47 @@ FND-007 завершён. Следующий этап: FND-009 — Structured Lo
 
 # FND-009 — Structured Logging
 
-Проверить уже на staging
+Статус: завершён.
 
-- [ ] JSON logs
-- [ ] requestId
-- [ ] correlationId
-- [ ] отсутствие sensitive данных
+## Staging verification
+
+Проверены следующие сценарии:
+
+- обычный запрос `/health/live`;
+- запрос с `x-request-id: fnd009-test-123`;
+- 404-запрос с `x-request-id: fnd009-error-123`;
+- запрос с тестовым `Authorization` header и `x-request-id: fnd009-sensitive-123`.
+
+Подтверждено:
+
+- backend пишет структурированные JSON logs;
+- логи содержат обязательные поля:
+  - `timestamp`;
+  - `level`;
+  - `service`;
+  - `environment`;
+  - `requestId`;
+  - `method`;
+  - `path`;
+  - `statusCode`;
+  - `duration`;
+- если клиент не передаёт request ID, API генерирует его;
+- если клиент передаёт `x-request-id`, API принимает его;
+- тот же `x-request-id` возвращается клиенту в response header;
+- request ID присутствует в backend logs;
+- request ID присутствует в безопасном API error response;
+- ошибки можно связать с конкретным HTTP-запросом по одному request ID;
+- тестовый `Authorization: Bearer ...` не попал в application logs;
+- sensitive headers и access token в проверенных логах отсутствуют.
+
+- [x] JSON logs
+- [x] requestId
+- [x] correlationId
+- [x] отсутствие sensitive данных
+
+## Итог этапа
+
+FND-009 завершён. Structured logging и correlation ID подтверждены на staging.
 
 ---
 
