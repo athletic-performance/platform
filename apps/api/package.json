@@ -16,7 +16,7 @@
     "prisma:validate": "dotenv -e ../../.env -- prisma validate"
   },
   "dependencies": {
-    "@nestjs/common": "^11.1.6",
+    "@nestjs/common": "^12.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.1.6",
     "@nestjs/platform-express": "^11.1.6",
