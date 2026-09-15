@@ -1,8 +1,8 @@
 # Roadmap — завершение M0 и переход к M1
 
-> Текущее состояние: FND-001 — FND-009 завершены.
+> Текущее состояние: FND-001 — FND-010 завершены.
 >
-> Следующий этап: FND-010 — Dependency Automation.
+> Следующий этап: FND-011 — Error Tracking.
 >
 > Источник истины по содержанию этапа: `docs/m0-engineering-foundation.md`.
 > Этот файл — план доделки оставшихся инфраструктурных пунктов M0 после миграции с GitLab на GitHub.
@@ -431,12 +431,48 @@ FND-009 завершён. Structured logging и correlation ID подтверж�
 
 # FND-010 — Dependency Automation
 
-Настроить
+Статус: завершён.
 
-- [ ] Dependabot
-  или
+## Фактическая реализация
 
-- [ ] Renovate
+- используется GitHub Dependabot;
+- конфигурация находится в `.github/dependabot.yml`;
+- Dependabot работает от корня pnpm workspace;
+- используется единый root `pnpm-lock.yaml`;
+- обновления проверяются полным GitHub Actions pipeline;
+- automatic merge не используется;
+- major updates не мержатся автоматически;
+- установлен лимит одновременно открытых dependency PR;
+- schedule настроен так, чтобы не создавать постоянный шум.
+
+## Runtime verification
+
+Подтверждено на реальных dependency updates:
+
+- Dependabot создаёт корректные PR для pnpm workspace;
+- dependency manifest и root `pnpm-lock.yaml` обновляются согласованно;
+- `pnpm install --frozen-lockfile` проходит;
+- lint, typecheck, test и build проходят через CI;
+- Dependabot rebase успешно используется после конфликтов с `main`;
+- успешно merged:
+  - `typescript-eslint 8.66.0 → 8.70.0`;
+  - `jest 30.4.2 → 30.5.1`;
+  - coordinated React upgrade:
+    - `react → 19.3.0`;
+    - `react-dom → 19.3.0`;
+    - `@types/react → 19.3.0`;
+    - `@types/react-dom → 19.3.0`;
+  - `class-validator 0.14.4 → 0.15.1`;
+- для `class-validator` перед merge проверено отсутствие использования `IsIBAN` / `isIBAN`;
+- major updates Prisma 7, dotenv-cli 11 и NestJS 12 не были merged в рамках FND-010 и оставлены для отдельных upgrade-задач;
+- после verification оставшиеся major Dependabot PR закрыты как deferred maintenance work.
+
+## Результат
+
+Dependency automation настроена и подтверждена на реальных Pull Request.
+FND-010 завершён.
+
+Следующий этап: FND-011 — Error Tracking.
 
 ---
 
