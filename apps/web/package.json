@@ -14,15 +14,15 @@
     "@platform/api-client": "workspace:*",
     "dotenv": "^16.6.1",
     "next": "^15.5.0",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
     "@platform/config": "workspace:*",
     "@types/node": "^22.17.1",
-    "@types/react": "^19.1.10",
-    "@types/react-dom": "^19.1.7",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "eslint": "^9.33.0",
     "tsx": "^4.20.4",
     "typescript": "^5.9.2"
