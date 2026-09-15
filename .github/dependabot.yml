@@ -1,71 +1,27 @@
 # Обновления зависимостей выполняются ежемесячно, чтобы не создавать постоянный шум.
 version: 2
 updates:
-  # Корневые зависимости и инструменты сборки репозитория.
   - package-ecosystem: npm
-    directory: /
+    directories:
+      - /
+      - /apps/web
+      - /apps/api
+      - /packages/api-client
+      - /packages/config
     schedule:
       interval: monthly
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 10
     groups:
-      tooling:
+      monorepo-minor-patch:
         patterns:
           - "*"
         update-types:
           - minor
           - patch
-
-  # Зависимости frontend-приложения.
-  - package-ecosystem: npm
-    directory: /apps/web
-    schedule:
-      interval: monthly
-    open-pull-requests-limit: 5
-    groups:
-      frontend:
+        group-by: dependency-name
+      monorepo-major:
         patterns:
           - "*"
         update-types:
-          - minor
-          - patch
-
-  # Зависимости backend-приложения.
-  - package-ecosystem: npm
-    directory: /apps/api
-    schedule:
-      interval: monthly
-    open-pull-requests-limit: 5
-    groups:
-      backend:
-        patterns:
-          - "*"
-        update-types:
-          - minor
-          - patch
-
-  # Зависимости внутренних workspace packages относятся к tooling.
-  - package-ecosystem: npm
-    directory: /packages/api-client
-    schedule:
-      interval: monthly
-    open-pull-requests-limit: 5
-    groups:
-      tooling:
-        patterns:
-          - "*"
-        update-types:
-          - minor
-          - patch
-
-  - package-ecosystem: npm
-    directory: /packages/config
-    schedule:
-      interval: monthly
-    open-pull-requests-limit: 5
-    groups:
-      tooling:
-        patterns:
-          - "*"
-        update-types:
-          - minor
-          - patch
+          - major
+        group-by: dependency-name
