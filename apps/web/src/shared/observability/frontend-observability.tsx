@@ -57,7 +57,7 @@ export function FrontendObservability() {
           environment: config.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT,
         },
         instrumentations: getWebInstrumentations(),
-        sessionTracking: { enabled: false },
+        sessionTracking: { enabled: true, persistent: false },
         beforeSend(item) {
           const meta = {
             ...item.meta,
