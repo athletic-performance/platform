@@ -62,7 +62,6 @@ export function FrontendObservability() {
           const meta = {
             ...item.meta,
             user: undefined,
-            session: undefined,
             page: item.meta.page
               ? { ...item.meta.page, url: stripUrlDetails(item.meta.page.url ?? '') }
               : undefined,
