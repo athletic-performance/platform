@@ -1,8 +1,8 @@
 # Roadmap — завершение M0 и переход к M1
 
-> Текущее состояние: FND-001 — FND-010 завершены.
+> Текущее состояние: FND-001 — FND-011 завершены.
 >
-> Следующий этап: FND-011 — Error Tracking.
+> Следующий этап: FND-012 — Production Dockerfile (Web).
 >
 > Источник истины по содержанию этапа: `docs/m0-engineering-foundation.md`.
 > Этот файл — план доделки оставшихся инфраструктурных пунктов M0 после миграции с GitLab на GitHub.
@@ -472,22 +472,41 @@ FND-009 завершён. Structured logging и correlation ID подтверж�
 Dependency automation настроена и подтверждена на реальных Pull Request.
 FND-010 завершён.
 
-Следующий этап: FND-011 — Error Tracking.
+FND-011 завершён.
 
 ---
 
 # FND-011 — Error Tracking
 
-Подключить
+Подключение и runtime acceptance подтверждены на staging.
 
-- [ ] Frontend
-- [ ] Backend
+- [x] Frontend
+- [x] Backend
 
-Проверить
+- [x] release
+- [x] environment
+- [x] тестовая ошибка
 
-- [ ] release
-- [ ] environment
-- [ ] тестовая ошибка
+Frontend:
+
+- Grafana Faro подключён;
+- staging frontend error подтверждён;
+- release по commit SHA подтверждён;
+- environment staging подтверждён;
+- sourcemaps успешно загружаются и не публикуются небезопасно.
+
+Backend:
+
+- OpenTelemetry error spans отправляются в Grafana Cloud;
+- service `platform-api` подтверждён в Tempo;
+- `service.version` содержит commit SHA;
+- `deployment.environment.name=staging` подтверждён;
+- `request.id` передаётся;
+- exception type/message/stacktrace подтверждены на тестовой staging ошибке.
+
+Frontend и backend errors разделены по разным telemetry pipeline. Sensitive,
+personal и health data не добавляются в telemetry. Временный `/__test/error`
+удалён после acceptance.
 
 ---
 
