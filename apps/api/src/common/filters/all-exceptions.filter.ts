@@ -4,6 +4,7 @@ import type { Request, Response } from 'express';
 import { REQUEST_ID_HEADER } from '../correlation/correlation.constants';
 import { getRequestId } from '../correlation/request-context';
 import { StructuredLoggerService } from '../logging/structured-logger.service';
+import { recordExceptionTelemetry } from '../../observability/instrumentation';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -17,6 +18,15 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     const status =
       exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
+
+    if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
+      recordExceptionTelemetry(exception, {
+        requestId,
+        method: request.method,
+        path: request.originalUrl.split('?')[0] ?? request.path,
+        statusCode: status,
+      });
+    }
 
     this.logger.error('request_failed', exception instanceof Error ? exception.stack : undefined, {
       requestId,
