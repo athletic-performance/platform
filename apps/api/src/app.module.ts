@@ -9,7 +9,6 @@ import { loadApiEnv } from './config/env';
 import { HealthModule } from './health/health.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { VersionModule } from './version/version.module';
-import { TestModule } from './test-endpoint/test.module';
 
 @Module({
   imports: [
@@ -22,7 +21,6 @@ import { TestModule } from './test-endpoint/test.module';
     PrismaModule,
     HealthModule,
     VersionModule,
-    TestModule,
   ],
   providers: [
     {
