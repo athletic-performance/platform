@@ -23,6 +23,8 @@ const sourceMapUploadEnabled = sourceMapUploadVariables.every(
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  output: 'standalone',
+  outputFileTracingRoot: path.join(configDir, '../../'),
   env: {
     // Vercel предоставляет commit SHA на этапе сборки; локально используется существующий COMMIT_SHA.
     NEXT_PUBLIC_COMMIT_SHA: process.env.VERCEL_GIT_COMMIT_SHA ?? process.env.COMMIT_SHA,

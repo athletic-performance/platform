@@ -1,8 +1,8 @@
 # Roadmap — завершение M0 и переход к M1
 
-> Текущее состояние: FND-001 — FND-011 завершены.
+> Текущее состояние: FND-001 — FND-012 завершены.
 >
-> Следующий этап: FND-012 — Production Dockerfile (Web).
+> Следующий этап: FND-013 — Complete Staging Walking Skeleton.
 >
 > Источник истины по содержанию этапа: `docs/m0-engineering-foundation.md`.
 > Этот файл — план доделки оставшихся инфраструктурных пунктов M0 после миграции с GitLab на GitHub.
@@ -514,11 +514,25 @@ personal и health data не добавляются в telemetry. Временн
 
 Низкий приоритет.
 
-Добавить
+Статус: завершён.
 
-- [ ] multi-stage
-- [ ] standalone
-- [ ] non-root
+- [x] multi-stage
+- [x] standalone
+- [x] non-root
+
+Фактическая реализация:
+
+- добавлен production Dockerfile для `apps/web`;
+- используется multi-stage build;
+- Next.js настроен с `output: 'standalone'`;
+- для monorepo настроен `outputFileTracingRoot`;
+- runtime запускается от non-root пользователя `nextjs`, UID `1001`;
+- production Docker image успешно собирается;
+- container успешно запускается;
+- frontend внутри container отвечает HTTP 200;
+- существующий Vercel deployment не изменён и не зависит от Dockerfile.
+
+FND-012 завершён. Следующий этап: FND-013 — Complete Staging Walking Skeleton.
 
 ---
 
