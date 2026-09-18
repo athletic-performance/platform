@@ -72,26 +72,34 @@ infra/                infra-артефакты (пока зарезервиро�
 2. Дальше только Pull Requests.
 3. `main` защищается: no direct push, no force push, required checks, squash merge.
 
-## Staging (web) — Vercel Preview
+## Staging (web) — Vercel
 
-Staging frontend = **Vercel Preview Environment** (отдельная ветка `staging` не используется).
+Staging frontend = текущий Vercel deployment проекта (отдельная ветка `staging`
+не используется). Для pull request дополнительно создаются Preview Deployments.
 
 Подключение проекта (вручную в Vercel UI):
 
 1. Import GitHub repository `athletic-performance/platform`.
 2. Root Directory: `apps/web`.
 3. Framework Preset: Next.js (подхватывается из `apps/web/vercel.json`).
-4. Preview Deployments: включены (по умолчанию для PR / не-production веток).
+4. Preview Deployments: включены для PR и не-production веток.
 5. Environment Variables → **Preview**:
-   - `NEXT_PUBLIC_API_BASE_URL` — создать переменную **без реального staging API URL**.
-   - Реальный URL API не подставлять до деплоя backend.
+   - `NEXT_PUBLIC_API_BASE_URL` — `https://athletic-performance-api-staging.fly.dev`.
+   - Для `Production` и `Preview` используется staging API до появления отдельного production-контура.
 
 Сборка на Vercel идёт из монорепозитория: install/build команды заданы в `apps/web/vercel.json`.
 
 ## Staging URLs
 
-- Web: Preview URL деплоя в Vercel (после подключения репозитория)
-- API: Fly.io staging URL (заполняется после FND-005)
+- Web: https://platform-web-five-psi.vercel.app
+- API: https://athletic-performance-api-staging.fly.dev
+- API liveness: https://athletic-performance-api-staging.fly.dev/health/live
+- API readiness: https://athletic-performance-api-staging.fly.dev/health/ready
+- API version: https://athletic-performance-api-staging.fly.dev/version
+
+## Deployment и rollback
+
+Актуальный staging flow описан в [документе deployment и rollback](docs/operations/deployment-and-rollback.md).
 
 ## Типичные ошибки
 
