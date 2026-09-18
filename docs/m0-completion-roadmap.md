@@ -1,8 +1,8 @@
 # Roadmap — завершение M0 и переход к M1
 
-> Текущее состояние: FND-001 — FND-012 завершены.
+> Текущее состояние: FND-001 — FND-013 завершены.
 >
-> Следующий этап: FND-013 — Complete Staging Walking Skeleton.
+> Следующий этап: FND-014 — Foundation Documentation.
 >
 > Источник истины по содержанию этапа: `docs/m0-engineering-foundation.md`.
 > Этот файл — план доделки оставшихся инфраструктурных пунктов M0 после миграции с GitLab на GitHub.
@@ -538,7 +538,11 @@ FND-012 завершён. Следующий этап: FND-013 — Complete Stag
 
 # FND-013 — Complete Staging Walking Skeleton
 
-Проверить полностью
+Статус: завершён.
+
+Изменений в коде или конфигурации для закрытия этапа не потребовалось.
+
+Все acceptance criteria выполнены.
 
 ```
 Vercel
@@ -563,6 +567,29 @@ Database: connected
 
 Version: <commit-sha>
 ```
+
+Runtime-проверка:
+
+- Vercel frontend доступен и использует staging Fly.io API;
+- frontend показывает `Web: healthy`, `API: healthy`, `Database: connected`;
+- frontend показывает актуальную версию и commit SHA;
+- `/health/live` staging API отвечает успешно;
+- `/health/ready` возвращает `database: up`;
+- `/version` возвращает commit SHA текущего deployment;
+- GitHub Actions staging smoke test успешно проходит;
+- проверка выполнена без локально запущенных web, API или PostgreSQL.
+
+Staging-контур работает как:
+
+```text
+Vercel
+↓
+Fly.io
+↓
+staging PostgreSQL
+```
+
+FND-013 завершён. Следующий этап: FND-014 — Foundation Documentation.
 
 ---
 
