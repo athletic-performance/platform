@@ -24,11 +24,6 @@ coverage
 .env
 .env.*
 
-# Sources of apps/packages not needed for api image
-apps/web/src
-apps/web/public
-packages/api-client/src
-
 # Docs & local tooling
 docs
 *.md
