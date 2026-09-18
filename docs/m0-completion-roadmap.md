@@ -1,8 +1,8 @@
 # Roadmap — завершение M0 и переход к M1
 
-> Текущее состояние: FND-001 — FND-013 завершены.
+> Текущее состояние: FND-001 — FND-014 завершены. M0 — Engineering Foundation завершён.
 >
-> Следующий этап: FND-014 — Foundation Documentation.
+> Следующий этап: M1 — Product & Architecture Freeze.
 >
 > Источник истины по содержанию этапа: `docs/m0-engineering-foundation.md`.
 > Этот файл — план доделки оставшихся инфраструктурных пунктов M0 после миграции с GitLab на GitHub.
@@ -589,24 +589,38 @@ Fly.io
 staging PostgreSQL
 ```
 
-FND-013 завершён. Следующий этап: FND-014 — Foundation Documentation.
+FND-013 завершён.
 
 ---
 
 # FND-014 — Foundation Documentation
 
-Проверить
+Статус: завершён.
 
-- [ ] README
-- [ ] ADR
-- [ ] Architecture Overview
-- [ ] Deployment Flow
-- [ ] Rollback
-- [ ] Staging URLs
+- [x] README
+- [x] ADR
+- [x] Architecture Overview
+- [x] Deployment Flow
+- [x] Rollback
+- [x] Staging URLs
+
+Фактическая реализация:
+
+- README актуален и проверен вторым разработчиком: Андрей подтвердил корректность инструкции;
+- ADR зафиксированы;
+- `docs/architecture/overview.md` актуален;
+- deployment flow и rollback описаны;
+- staging URLs указаны;
+- `docs/m0-engineering-foundation.md` синхронизирован с фактической GitHub-based инфраструктурой;
+- противоречий между Foundation documentation и текущими repository workflows/configuration не осталось.
+
+FND-014 завершён.
 
 ---
 
 # Definition of Done M0
+
+Статус: M0 — Engineering Foundation завершён.
 
 Этап считается завершённым, когда автоматически работает цепочка
 

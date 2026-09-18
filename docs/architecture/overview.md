@@ -51,18 +51,23 @@ docs/             — архитектура, ADR, планы этапов
 infra/            — место для будущих infra-артефактов
 ```
 
-## Deployment flow (целевой для закрытия M0)
+## Deployment flow
 
 ```text
 Merge to main
   → GitHub Actions validation
-  → API image build
-  → GitHub Container Registry (GHCR)
-  → Fly.io staging
-  → Vercel staging
-  → smoke test
+  → API image build и публикация в GHCR/Fly Registry
+  → Fly.io staging API deploy по commit SHA
+  → staging PostgreSQL migrations
+  → Vercel deployment
+  → staging smoke test
 ```
 
-Локальный bootstrap и validation pipeline входят в первый логический MR.
-Публикация image, staging deploy, smoke test и error tracking оформляются
-отдельными foundation-задачами после initial commit.
+GitHub Actions workflow `.github/workflows/publish-api-image.yml` выполняет
+validation, публикацию API image, deployment в Fly.io, staging migrations и
+smoke test. Vercel deployment запускается интеграцией GitHub → Vercel, а smoke
+test ожидает успешный Vercel status для проверяемого commit.
+
+Rollback API выполняется на ранее опубликованный image с commit SHA. Подробный
+порядок deployment и rollback приведён в
+[операционной документации](../operations/deployment-and-rollback.md).

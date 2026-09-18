@@ -3,7 +3,7 @@
 ## Цель этапа
 
 Подготовить воспроизводимую инженерную основу проекта, на которой два разработчика смогут безопасно вести дальнейшую
-разработку через GitLab, Merge Requests и CI/CD.
+разработку через GitHub, Pull Requests и GitHub Actions.
 
 Этап не включает продуктовую бизнес-логику:
 
@@ -46,13 +46,13 @@ Version: <commit-sha>
 
 Уже выполнено:
 
-- создана GitLab Group `athletic-performance`;
+- создана GitHub Organization `athletic-performance`;
 - создан репозиторий `platform`;
 - настроен SSH-доступ;
-- Андрей имеет роль `Owner`;
-- Игорь приглашён с ролью `Developer`;
-- принято решение не зависеть от GitLab Ultimate;
-- репозиторий пустой и готов к первому коммиту.
+- добавлен второй разработчик;
+- настроен GitHub Actions;
+- настроен GitHub Container Registry (GHCR);
+- staging-контур подключён к Vercel, Fly.io и staging PostgreSQL.
 
 ---
 
@@ -64,7 +64,7 @@ Version: <commit-sha>
 mkdir -p ~/projects
 cd ~/projects
 
-git clone git@gitlab.com:athletic-performance/platform.git
+git clone git@github.com:athletic-performance/platform.git
 cd platform
 ```
 
@@ -498,7 +498,7 @@ duration
 README должен позволять Игорю с чистой машины выполнить:
 
 ```bash
-git clone git@gitlab.com:athletic-performance/platform.git
+git clone git@github.com:athletic-performance/platform.git
 cd platform
 pnpm install
 docker compose up -d
@@ -555,8 +555,8 @@ NestJS API
 PostgreSQL
 Vercel
 Fly.io
-GitLab CI/CD
-GitLab Container Registry
+GitHub Actions
+GitHub Container Registry (GHCR)
 ```
 
 ---
@@ -575,7 +575,7 @@ git push -u origin main
 
 ---
 
-# 11. Настройка GitLab
+# 11. Настройка GitHub
 
 ## 11.1. Защитить `main`
 
@@ -583,12 +583,12 @@ git push -u origin main
 
 - запрет прямого push;
 - запрет force push;
-- изменения только через Merge Request;
+- изменения только через Pull Request;
 - обязательный успешный pipeline;
 - squash merge;
 - удаление source branch после merge.
 
-## 11.2. Merge Request template
+## 11.2. Pull Request template
 
 Добавить шаблон с блоками:
 
@@ -667,11 +667,11 @@ type::decision
 
 После initial commit создать Issues:
 
-## FND-001 — Configure GitLab CI validation pipeline
+## FND-001 — Configure GitHub Actions validation pipeline
 
 Acceptance criteria:
 
-- pipeline запускается для Merge Request;
+- pipeline запускается для Pull Request;
 - используется frozen lockfile;
 - выполняются `lint`, `typecheck`, `test`, `build`;
 - устаревший pipeline отменяется после нового push;
@@ -688,28 +688,28 @@ Acceptance criteria:
 - image собирается из корня монорепозитория;
 - health endpoint доступен внутри контейнера.
 
-## FND-003 — Publish API image to GitLab Container Registry
+## FND-003 — Publish API image to GitHub Container Registry
 
 Acceptance criteria:
 
 - image собирается после merge в `main`;
 - image получает immutable tag по commit SHA;
-- image сохраняется в GitLab Container Registry;
+- image сохраняется в GitHub Container Registry (GHCR);
 - deployment не зависит только от `latest`.
 
 Пример:
 
 ```text
-registry.gitlab.com/athletic-performance/platform/api:<commit-sha>
+ghcr.io/athletic-performance/platform/api:<commit-sha>
 ```
 
 ## FND-004 — Deploy web staging to Vercel
 
 Acceptance criteria:
 
-- GitLab repository подключён к Vercel;
+- GitHub repository подключён к Vercel;
 - root directory указывает на `apps/web`;
-- Merge Request получает preview deployment;
+- Pull Request получает preview deployment;
 - staging variables отделены от local variables;
 - frontend обращается к staging API.
 
@@ -738,7 +738,7 @@ Acceptance criteria:
 Acceptance criteria:
 
 - local, staging и будущие production variables разделены;
-- GitLab CI variables имеют корректный scope;
+- GitHub Actions secrets и variables имеют корректный scope;
 - Vercel variables разделены по environment;
 - Fly.io secrets настроены через secret storage;
 - secrets отсутствуют в logs и repository.
@@ -766,13 +766,13 @@ Acceptance criteria:
 
 ## FND-010 — Configure dependency update automation
 
-Использовать Renovate или аналог, совместимый с GitLab Free.
+Использовать GitHub Dependabot или аналог, совместимый с текущим GitHub repository.
 
 Acceptance criteria:
 
 - frontend, backend и tooling dependencies разделены;
 - major updates не мержатся автоматически;
-- update MR проходят полный pipeline;
+- update Pull Requests проходят полный pipeline;
 - частота обновлений не создаёт постоянный шум.
 
 ## FND-011 — Connect error tracking
@@ -820,11 +820,11 @@ Acceptance criteria:
 
 ---
 
-# 13. GitLab CI/CD
+# 13. GitHub Actions CI/CD
 
 ## 13.1. Validation pipeline
 
-Для каждого Merge Request:
+Для каждого Pull Request:
 
 ```text
 install
@@ -854,7 +854,7 @@ validate
   ↓
 build API image
   ↓
-push image to GitLab Registry
+push image to GHCR and Fly Registry
 ```
 
 ## 13.3. Deployment pipeline
@@ -885,7 +885,7 @@ apps/web
 
 Настроить:
 
-- preview deployments для Merge Requests;
+- preview deployments для Pull Requests;
 - staging API URL;
 - отдельные environment variables;
 - production deployment пока не является целью M0.
@@ -983,12 +983,12 @@ Production создаётся перед первым реальным поль�
 - [ ] Реализованы `/health/live`, `/health/ready`, `/version`.
 - [ ] Frontend получает состояние API и базы данных.
 - [ ] Добавлены structured logging и correlation ID.
-- [ ] Создан initial commit и отправлен в GitLab.
+- [ ] Создан initial commit и отправлен в GitHub.
 - [ ] `main` защищён.
-- [ ] Следующие изменения проходят через Merge Requests.
-- [ ] GitLab CI проверяет каждый Merge Request.
+- [ ] Следующие изменения проходят через Pull Requests.
+- [ ] GitHub Actions проверяет каждый Pull Request.
 - [ ] API production image собирается.
-- [ ] API image публикуется в GitLab Container Registry.
+- [ ] API image публикуется в GitHub Container Registry (GHCR) и Fly Registry для staging deployment.
 - [ ] Web развёрнут на Vercel staging.
 - [ ] API развёрнут на Fly.io staging.
 - [ ] Создана отдельная staging PostgreSQL.
@@ -1006,11 +1006,11 @@ Production создаётся перед первым реальным поль�
 M0 считается завершённым, когда после нового merge в `main` автоматически происходит:
 
 ```text
-GitLab CI validation
+GitHub Actions validation
   ↓
 API image build
   ↓
-GitLab Container Registry
+GitHub Container Registry (GHCR) и Fly Registry
   ↓
 Fly.io staging deployment
   ↓
