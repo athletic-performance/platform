@@ -22,7 +22,7 @@
   "devDependencies": {
     "@grafana/faro-cli": "^0.12.0",
     "@platform/config": "workspace:*",
-    "@types/node": "^22.17.1",
+    "@types/node": "^26.6.3",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "eslint": "^9.33.0",
